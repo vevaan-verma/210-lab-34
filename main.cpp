@@ -126,6 +126,57 @@ public:
 		cout << endl;
 
 	}
+
+	// findShortestPaths() - calculates the shortest paths from the start node
+	// arguments: int start - the starting intersection
+	// returns: void
+	void findShortestPaths(int start) {
+
+		vector<int> dist(SIZE, numeric_limits<int>::max());
+		priority_queue<Pair, vector<Pair>, greater<>> pq;
+		dist[start] = 0;
+		pq.push({ 0, start });
+
+		while (!pq.empty()) {
+
+			int currDist = pq.top().first;
+			int currNode = pq.top().second;
+			pq.pop();
+
+			// skip outdated pairs
+			if (currDist > dist[currNode]) continue;
+
+			for (auto& neighbor : adjList[currNode]) {
+
+				int adjNode = neighbor.first;
+				int weight = neighbor.second;
+
+				if (dist[currNode] + weight < dist[adjNode]) {
+
+					dist[adjNode] = dist[currNode] + weight;
+					pq.push({ dist[adjNode], adjNode });
+
+				}
+			}
+		}
+
+		// output the shortest paths
+		cout << "Shortest path from Intersection " << start << ":\n";
+
+		for (int i = 0; i < SIZE; i++) {
+
+			cout << start << " -> " << i << " : ";
+
+			if (dist[i] == numeric_limits<int>::max())
+				cout << "∞ (unreachable)\n";
+			else
+				cout << dist[i] << " minutes\n";
+
+		}
+
+		cout << endl;
+
+	}
 };
 
 // main() is the entry point of the program and drives the program
@@ -146,6 +197,9 @@ int main() {
 	cout << "Analyzing Traffic Network:\n\n";
 	trafficNetwork.analyzeTrafficDFS(0);
 	trafficNetwork.analyzeTrafficBFS(0);
+
+	cout << "Finding Shortest Paths:\n\n";
+	trafficNetwork.findShortestPaths(0);
 
 	return 0;
 
