@@ -124,10 +124,10 @@ public:
 int main() {
 
 	vector<Edge> edges = {
-		{0,1,12},{0,2,8},{0,3,21},{2,3,6},{2,6,2},{5,6,6},{4,5,9},{2,4,4},{2,5,5}
+		{1,0,8},{2,0,21},{2,1,6},{3,1,5},{4,1,4},{7,2,11},{8,2,8},{4,3,9},{6,5,10},{7,5,15},{8,5,5},{7,6,3},{8,6,7}
 	};
 
-	int numNodes = 7;
+	int numNodes = 9; // nodes range from 0 - 8
 	Graph graph(edges, numNodes);
 
 	cout << "Graph's adjacency list:" << endl;
