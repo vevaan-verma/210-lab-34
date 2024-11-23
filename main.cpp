@@ -6,6 +6,12 @@ using namespace std;
 #include <stack>
 #include <utility>
 
+class Graph;
+
+/* FUNCTION PROTOTYPES */
+void outputMenu();
+void handleMenu(int choice, Graph& trafficNetwork);
+
 struct Edge {
 	int src, dest, weight;  // source intersection, destination intersection, and traffic flow
 };
@@ -265,18 +271,77 @@ int main() {
 	int numIntersections = 9; // intersections range from 0 - 8
 	Graph trafficNetwork(edges, numIntersections);
 
-	trafficNetwork.printTrafficNetwork();
+	while (true) {
 
-	cout << "Analyzing Traffic Network:\n\n";
-	trafficNetwork.analyzeTrafficDFS(0);
-	trafficNetwork.analyzeTrafficBFS(0);
+		outputMenu();
+		int choice;
+		cin >> choice;
 
-	cout << "Finding Shortest Paths:\n\n";
-	trafficNetwork.findShortestPaths(0);
+		if (choice == 0) // exit the program
+			break;
 
-	cout << "Finding Minimum Spanning Tree:\n\n";
-	trafficNetwork.findMST();
+		handleMenu(choice, trafficNetwork);
+
+	}
 
 	return 0;
 
+}
+
+// outputMenu() - outputs the menu for the traffic network program
+// arguments: none
+// returns: void
+void outputMenu() {
+
+	cout << "Traffic Network Menu:" << endl;
+	cout << "[1] Display traffic network" << endl;
+	cout << "[2] Check congestion spread (BFS)" << endl;
+	cout << "[3] Plan inspection route (DFS)" << endl;
+	cout << "[4] Calculate shortest paths" << endl;
+	cout << "[5] Find Minimum Spanning Tree" << endl;
+	cout << "[0] Exit" << endl;
+	cout << "Enter your choice: ";
+
+}
+
+// handleMenu() - handles the user's menu choice
+// arguments: int choice - the user's menu choice, Graph& trafficNetwork - the traffic network graph
+// returns: void
+void handleMenu(int choice, Graph& trafficNetwork) {
+
+	cout << endl; // output blank line for formatting purposes
+	int start;
+
+	switch (choice) {
+
+	case 1:
+		trafficNetwork.printTrafficNetwork();
+		break;
+
+	case 2:
+		cout << "Enter starting intersection for BFS: ";
+		cin >> start;
+		trafficNetwork.analyzeTrafficBFS(start);
+		break;
+
+	case 3:
+		cout << "Enter starting intersection for DFS: ";
+		cin >> start;
+		trafficNetwork.analyzeTrafficDFS(start);
+		break;
+
+	case 4:
+		cout << "Enter starting intersection for shortest paths: ";
+		cin >> start;
+		trafficNetwork.findShortestPaths(start);
+		break;
+
+	case 5:
+		trafficNetwork.findMST();
+		break;
+
+	default:
+		cout << "Invalid choice. Please try again.\n";
+
+	}
 }
