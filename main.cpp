@@ -1,11 +1,10 @@
 ﻿// COMSC-210 | Lab 34 | Vevaan Verma
+using namespace std;
 #include <iostream>
 #include <vector>
 #include <queue>
 #include <stack>
 #include <utility>
-
-using namespace std;
 
 struct Edge {
 	int src, dest, weight;  // source intersection, destination intersection, and traffic flow
@@ -13,16 +12,63 @@ struct Edge {
 
 typedef pair<int, int> Pair;
 
+// Disjoint Set Union (DSU) class for Kruskal's Algorithm
+class DSU {
+	vector<int> parent, rank;
+
+public:
+	DSU(int size) {
+
+		parent.resize(size);
+		rank.resize(size, 0);
+		for (int i = 0; i < size; i++) parent[i] = i;
+
+	}
+
+	int find(int x) {
+
+		if (parent[x] != x) parent[x] = find(parent[x]);
+		return parent[x];
+
+	}
+
+	void unite(int x, int y) {
+
+		int rootX = find(x);
+		int rootY = find(y);
+
+		if (rootX != rootY) {
+
+			if (rank[rootX] > rank[rootY]) {
+
+				parent[rootY] = rootX;
+
+			} else if (rank[rootX] < rank[rootY]) {
+
+				parent[rootX] = rootY;
+
+			} else {
+
+				parent[rootY] = rootX;
+				rank[rootX]++;
+
+			}
+		}
+	}
+};
+
 class Graph {
 
 public:
 	vector<vector<Pair>> adjList;
 	int SIZE;
+	vector<Edge> edges;  // Keep track of all edges for MST
 
 	Graph(vector<Edge> const& edges, int size) {
 
 		SIZE = size;
 		adjList.resize(SIZE);
+		this->edges = edges;  // Store all edges
 
 		for (auto& edge : edges) {
 
@@ -177,6 +223,33 @@ public:
 		cout << endl;
 
 	}
+
+	void findMST() {
+
+		sort(edges.begin(), edges.end(), [](Edge a, Edge b) { return a.weight < b.weight; }); // sort edges by weight
+
+		DSU dsu(SIZE);
+		vector<Edge> mst;
+
+		for (auto& edge : edges) { // iterate through all edges
+
+			if (dsu.find(edge.src) != dsu.find(edge.dest)) { // if the source and destination are not in the same set
+
+				dsu.unite(edge.src, edge.dest); // unite the sets
+				mst.push_back(edge); // add the edge to the MST
+
+			}
+		}
+
+		// output the MST edges
+		cout << "Minimum Spanning Tree edges:\n";
+
+		for (auto& edge : mst)
+			cout << "Edge from " << edge.src << " to " << edge.dest << " with capacity: " << edge.weight << " units\n";
+
+		cout << endl;
+
+	}
 };
 
 // main() is the entry point of the program and drives the program
@@ -200,6 +273,9 @@ int main() {
 
 	cout << "Finding Shortest Paths:\n\n";
 	trafficNetwork.findShortestPaths(0);
+
+	cout << "Finding Minimum Spanning Tree:\n\n";
+	trafficNetwork.findMST();
 
 	return 0;
 
